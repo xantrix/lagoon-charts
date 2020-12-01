@@ -22,7 +22,7 @@ install-ingress:
 		--create-namespace \
 		--namespace ingress-nginx \
 		--wait \
-		--timeout 15m \
+		--timeout 20m \
 		--set controller.service.type=NodePort \
 		--set controller.service.nodePorts.http=32080 \
 		--set controller.service.nodePorts.https=32443 \
@@ -38,7 +38,7 @@ install-registry:
 		--create-namespace \
 		--namespace registry \
 		--wait \
-		--timeout 15m \
+		--timeout 20m \
 		--set expose.tls.enabled=false \
 		--set "expose.ingress.annotations.kubernetes\.io\/ingress\.class=nginx" \
 		--set "expose.ingress.hosts.core=registry.$$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}').nip.io" \
@@ -57,7 +57,7 @@ install-nfs-server-provisioner:
 		--create-namespace \
 		--namespace nfs-server-provisioner \
 		--wait \
-		--timeout 15m \
+		--timeout 20m \
 		--set storageClass.name=bulk \
 		nfs-server-provisioner \
 		stable/nfs-server-provisioner
@@ -70,7 +70,7 @@ install-mariadb:
 		--create-namespace \
 		--namespace mariadb \
 		--wait \
-		--timeout 15m \
+		--timeout 20m \
 		$$(kubectl get ns mariadb > /dev/null 2>&1 && echo --set auth.rootPassword=$$(kubectl get secret --namespace mariadb mariadb -o json | jq -r '.data."mariadb-root-password" | @base64d')) \
 		mariadb \
 		bitnami/mariadb
@@ -82,7 +82,7 @@ install-lagoon-core:
 		--create-namespace \
 		--namespace lagoon \
 		--wait \
-		--timeout 15m \
+		--timeout 20m \
 		--values ./charts/lagoon-core/ci/linter-values.yaml \
 		--set autoIdler.enabled=false \
 		--set backupHandler.enabled=false \
@@ -112,7 +112,7 @@ install-lagoon-remote: install-lagoon-core install-mariadb
 		--create-namespace \
 		--namespace lagoon \
 		--wait \
-		--timeout 15m \
+		--timeout 20m \
 		--values ./charts/lagoon-remote/ci/linter-values.yaml \
 		--set "rabbitMQPassword=$$(kubectl -n lagoon get secret lagoon-core-broker -o json | jq -r '.data.RABBITMQ_PASSWORD | @base64d')" \
 		--set "dockerHost.registry=registry.$$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}').nip.io:32080" \
