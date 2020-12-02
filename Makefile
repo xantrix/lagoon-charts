@@ -1,4 +1,4 @@
-SUITE = features-kubernetes
+TESTS = [features-kubernetes]
 # if IMAGE_TAG is not set, it will fall back to the version set in the CI
 # values file, then to the chart default.
 IMAGE_TAG =
@@ -11,7 +11,7 @@ fill-test-ci-values: install-ingress install-registry install-lagoon-core instal
 		&& export routeSuffixHTTP="$$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}').nip.io" \
 		&& export routeSuffixHTTPS="$$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}').nip.io" \
 		&& export token="$$(kubectl -n lagoon get secret -o json | jq -r '.items[] | select(.metadata.name | match("lagoon-build-deploy-token")) | .data.token | @base64d')" \
-		&& export suite=$(SUITE) \
+		&& export tests='$(TESTS)' \
 		&& valueTemplate=charts/lagoon-test/ci/linter-values.yaml \
 		&& envsubst < $$valueTemplate.tpl > $$valueTemplate
 
